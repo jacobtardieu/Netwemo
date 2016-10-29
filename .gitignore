@@ -6,5 +6,5 @@
 /target/
 .idea/
 logs
-conf/application.conf
+src/main/resources/application.conf
 .history
