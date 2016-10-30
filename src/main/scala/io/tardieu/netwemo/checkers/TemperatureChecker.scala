@@ -28,14 +28,13 @@ class TemperatureChecker private (val wemoConnector: WemoConnector, val netatmoC
   val coldStartTime: LocalTime = LocalTime.of(conf.getInt("coldHourStart"), conf.getInt("coldMinuteStart"))
   val coldStopTime: LocalTime = LocalTime.of(conf.getInt("coldHourStop"), conf.getInt("coldMinuteStop"))
 
-  override val deviceName = "chauffage"
+  override val deviceName = conf.getString("deviceName")
 
-  private def isWorkingDay: Boolean = {
+  private def isWorkingDay: Boolean =
     LocalDateTime.now.getDayOfWeek match {
       case DayOfWeek.SATURDAY | DayOfWeek.SUNDAY => false
       case _ => true
     }
-  }
 
   private def inColdHours(startTime: LocalTime, stopTime: LocalTime): Boolean = {
     val now = LocalTime.now()

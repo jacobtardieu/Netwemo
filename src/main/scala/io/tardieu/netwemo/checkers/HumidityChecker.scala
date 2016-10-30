@@ -25,14 +25,14 @@ class HumidityChecker private (val wemoConnector: WemoConnector, val netatmoConn
   private val lowThreshold = conf.getInt("lowThreshold")
   private val highThreshold = conf.getInt("highThreshold")
 
-  override def deviceName: String = "desu"
+  override def deviceName: String = conf.getString("deviceName")
 
   override def checkValue: Future[Float] = netatmoConnector.getHumidity
 
   private def inService(startTime: LocalTime, stopTime: LocalTime): Boolean = {
     val now = LocalTime.now()
     val b = now.isAfter(startTime) && now.isBefore(stopTime)
-    log.debug(s"Humidity in service: $b")
+    log.debug(s"Humidity in service: {}", b)
     b
   }
 
