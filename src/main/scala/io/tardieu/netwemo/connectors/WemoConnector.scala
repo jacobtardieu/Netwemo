@@ -9,9 +9,8 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 /**
   * Handles the connection to Wemo device.
@@ -38,20 +37,22 @@ class WemoConnector(implicit val system: ActorSystem) {
       uri = Uri(s"http://$wemoHost:$wemoPort/api/device/$device").withQuery(Query("state" -> state))
     )
 
-    // TODO: Add a check/timeout in the case the ouimeaux server is not present
-    Http().singleRequest(request).foreach { response =>
-      val message = Await.result(Unmarshal(response.entity).to[String], 1.second)
-      if (response.status.isFailure()) {
-        logger.error(s"HTTP error ${response.status}: $message")
-      }
-      else {
-        logger.debug(
-          "Switch {} order for {} received with status {}",
-          state, device, response.status)
-        logger.trace(
-          "Switch {} order for {} received with status {}: {}",
-          state, device, response.status, message)
-      }
+    Http().singleRequest(request).onComplete {
+      case Success(response) =>
+        val message = Unmarshal(response.entity).to[String]
+        if (response.status.isFailure()) {
+          message.foreach(logger.error(s"HTTP error {}: {}", response.status.asInstanceOf[Any], _))
+        }
+        else {
+          logger.debug(
+            "Switch {} order for {} received with status {}",
+            state, device, response.status)
+          logger.trace(
+            "Switch {} order for {} received with status {}: {}",
+            state, device, response.status, message)
+        }
+      case Failure(e) =>
+        logger.error("Error contacting the wemo server", e)
     }
   }
 
