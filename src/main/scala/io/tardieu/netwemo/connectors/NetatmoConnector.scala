@@ -67,17 +67,15 @@ class NetatmoConnector(implicit val system: ActorSystem) extends JsonSupport {
       headers = List(`Accept`(MediaTypes.`application/json`))
     )
 
-    val token = Http().singleRequest(request).flatMap { response =>
+    Http().singleRequest(request).flatMap { response =>
       response.status match {
         case status if status.isFailure() =>
           val message = Await.result(Unmarshal(response.entity).to[String], 1.second)
           throw new RuntimeException(s"HTTP error $status: $message")
         case _ =>
           Unmarshal(response.entity).to[Token]
-
       }
     }
-    token
   }
 
   def getMetric(metricType: Metric.MetricType): Future[Float] = {
