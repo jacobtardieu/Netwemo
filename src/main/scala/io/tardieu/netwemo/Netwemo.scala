@@ -25,8 +25,8 @@ object Netwemo {
     val temperatureChecker = actorSystem.actorOf(TemperatureChecker.props(wemoConnector, netatmoConnector))
     val humidityChecker = actorSystem.actorOf(HumidityChecker.props(wemoConnector, netatmoConnector))
 
-    actorSystem.scheduler.schedule(0.second, 1.minute, temperatureChecker, RunCheck)
-    actorSystem.scheduler.schedule(5.second, 1.minute, humidityChecker, RunCheck)
+    actorSystem.scheduler.schedule(0.seconds, 10.minutes, temperatureChecker, RunCheck)
+    actorSystem.scheduler.schedule(15.seconds, 10.minutes, humidityChecker, RunCheck)
 
   }
 

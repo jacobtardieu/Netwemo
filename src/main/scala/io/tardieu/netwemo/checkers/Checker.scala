@@ -5,6 +5,7 @@ import io.tardieu.netwemo.connectors.{NetatmoConnector, WemoConnector}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 case object RunCheck
 
@@ -22,10 +23,13 @@ trait Checker extends Actor with ActorLogging {
 
   def activate(): Unit = {
     log.debug("Activating check for {}", deviceName)
-    checkValue.map(computeDesiredState).map {
-      case Some(true) => wemoConnector.switchOn(deviceName)
-      case Some(false) => wemoConnector.switchOff(deviceName)
-      case None => () // We leave the switch in the same state
+    checkValue.map(computeDesiredState).onComplete {
+      case Success(Some(true)) => wemoConnector.switchOn(deviceName)
+      case Success(Some(false)) => wemoConnector.switchOff(deviceName)
+      case Success(None) => // We leave the switch in the same state
+      case Failure(ex) =>
+        log.error(ex, s"Exception in computing desired state, switching off")
+        wemoConnector.switchOff(deviceName)
     }
   }
 
