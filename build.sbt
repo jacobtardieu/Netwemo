@@ -4,13 +4,15 @@ version := "2.0.0"
 
 scalaVersion := "2.11.8"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.11"
+val akkaVersion = "2.4.11"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.4.11"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http-experimental" % "2.4.11"
+libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.11"
+libraryDependencies += "com.typesafe.akka" %% "akka-http-experimental" % akkaVersion
+
+libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaVersion
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
 
