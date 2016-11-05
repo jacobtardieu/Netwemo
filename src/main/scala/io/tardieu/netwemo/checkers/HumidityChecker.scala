@@ -38,7 +38,8 @@ class HumidityChecker private (val wemoConnector: WemoConnector, val netatmoConn
 
   override def computeDesiredState(value: Float): Option[Boolean] = {
     inService(startTime, stopTime) match {
-      case true => computeState(value, lowThreshold, highThreshold)
+      case true => computeState(value, lowThreshold, highThreshold).map(!_) // We want to switch on the
+        // deshumidifier if the value is too high
       case false => Some(false)
     }
   }
