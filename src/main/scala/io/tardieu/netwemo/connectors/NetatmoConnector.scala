@@ -25,7 +25,7 @@ object Metric extends Enumeration {
 }
 
 final case class Token(access_token: String, expires_in: Long)
-final case class Measure(value: Seq[Seq[Long]])
+final case class Measure(value: Seq[Seq[Float]])
 final case class NetatmoResponse(status: String, body: Seq[Measure], time_exec: Float)
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
