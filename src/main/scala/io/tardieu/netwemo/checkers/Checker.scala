@@ -4,12 +4,13 @@ import akka.actor.{Actor, ActorLogging}
 import io.tardieu.netwemo.connectors.{NetatmoConnector, WemoConnector}
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 case object RunCheck
 
 trait Checker extends Actor with ActorLogging {
+
+  private[this] implicit val executionContext = context.system.dispatcher
 
   def wemoConnector: WemoConnector
 

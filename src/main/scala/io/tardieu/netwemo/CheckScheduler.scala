@@ -6,7 +6,6 @@ import io.tardieu.netwemo.connectors.{NetatmoConnector, WemoConnector}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Class responsible for scheduling the checks and providing method to replace them
@@ -15,6 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class CheckScheduler(implicit actorSystem: ActorSystem) {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
+  private[this] implicit val executionContext = actorSystem.dispatcher
 
   private[this] val netatmoConnector = new NetatmoConnector
   private[this] val wemoConnector = new WemoConnector
