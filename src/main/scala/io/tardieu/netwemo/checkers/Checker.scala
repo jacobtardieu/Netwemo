@@ -10,7 +10,7 @@ case object RunCheck
 
 trait Checker extends Actor with ActorLogging {
 
-  private[this] implicit val executionContext = context.system.dispatcher
+  private[this] implicit val executionContext = context.dispatcher
 
   def wemoConnector: WemoConnector
 
