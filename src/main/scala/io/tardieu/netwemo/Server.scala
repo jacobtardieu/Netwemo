@@ -17,7 +17,6 @@ import scala.concurrent.duration._
 class Server(checkScheduler: CheckScheduler)(implicit actorSystem: ActorSystem) {
 
   private[this] implicit val materializer = ActorMaterializer()
-  // needed for the future flatMap/onComplete in the end
   private[this] implicit val executionContext = actorSystem.dispatcher
 
   private[this] val conf = ConfigFactory.load().getConfig("server")
