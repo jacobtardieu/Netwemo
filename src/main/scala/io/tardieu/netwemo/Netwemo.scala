@@ -10,7 +10,8 @@ object Netwemo {
   private val logger = LoggerFactory.getLogger(getClass)
   implicit val actorSystem = ActorSystem()
 
-  private val checkScheduler = new CheckScheduler()(actorSystem)
+  private val checkScheduler = new CheckScheduler()
+  private val server = new Server(checkScheduler)
 
   def main(args: Array[String]): Unit = {
 
@@ -19,11 +20,11 @@ object Netwemo {
     checkScheduler.scheduleOrReplaceTemperature(0.second)
     checkScheduler.scheduleOrReplaceHumidity(15.seconds)
 
-
   }
 
   def shutdown(): Unit = {
     logger.info("Stopping Netwemo")
+    server.stopServer()
     actorSystem.terminate() // TODO: Close all connection pools from the Akka Http() objects
   }
 
