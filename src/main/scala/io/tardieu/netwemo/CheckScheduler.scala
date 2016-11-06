@@ -35,11 +35,9 @@ class CheckScheduler(implicit actorSystem: ActorSystem) {
     tempSchedule = Some(actorSystem.scheduler.schedule(initialDelay, checkInterval, temperatureChecker, RunCheck))
   }
 
-  def cancelTemperatureSchedule() = tempSchedule match {
-    case Some(schedule) =>
-      schedule.cancel()
-      tempSchedule = None
-    case None => logger.debug("Temperature schedule already inactive")
+  def cancelTemperatureSchedule() = {
+    tempSchedule.fold(logger.debug("Temperature schedule already inactive"))(_.cancel())
+    tempSchedule = None
   }
 
   def scheduleOrReplaceHumidity(initialDelay: FiniteDuration) = {
@@ -50,11 +48,9 @@ class CheckScheduler(implicit actorSystem: ActorSystem) {
     humiditySchedule = Some(actorSystem.scheduler.schedule(initialDelay, checkInterval, humidityChecker, RunCheck))
   }
 
-  def cancelHumiditySchedule() = humiditySchedule match {
-    case Some(schedule) =>
-      schedule.cancel()
-      humiditySchedule = None
-    case None => logger.debug("Humidity schedule already inactive")
+  def cancelHumiditySchedule() = {
+    humiditySchedule.fold(logger.debug("Humidity schedule already inactive"))(_.cancel())
+    humiditySchedule = None
   }
 
 }
