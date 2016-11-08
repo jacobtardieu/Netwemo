@@ -9,7 +9,6 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 /**
@@ -22,6 +21,7 @@ class WemoConnector(implicit val system: ActorSystem) {
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
   private[this] implicit val materializer = ActorMaterializer()
+  private[this] implicit val executionContext = system.dispatcher
 
   private[this] val conf = ConfigFactory.load.getConfig("wemo")
   private[this] val wemoHost = conf.getString("host")

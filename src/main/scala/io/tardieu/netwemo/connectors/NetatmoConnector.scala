@@ -11,7 +11,6 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import spray.json.DefaultJsonProtocol
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
@@ -40,6 +39,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 class NetatmoConnector(implicit val system: ActorSystem) extends JsonSupport {
 
   private[this] implicit val materializer = ActorMaterializer()
+  private[this] implicit val executionContext = system.dispatcher
 
   private[this] val conf = ConfigFactory.load.getConfig("netatmo")
 
