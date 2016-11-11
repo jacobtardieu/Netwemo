@@ -1,7 +1,10 @@
 package io.tardieu.netwemo
 
-import akka.actor.{ActorSystem, Cancellable}
-import io.tardieu.netwemo.checkers.{HumidityChecker, RunCheck, TemperatureChecker}
+import java.util.concurrent.TimeUnit
+
+import akka.actor.{ActorRef, ActorSystem, Cancellable}
+import com.typesafe.config.ConfigFactory
+import io.tardieu.netwemo.checkers.RunCheck
 import io.tardieu.netwemo.connectors.{NetatmoConnector, WemoConnector}
 import org.slf4j.LoggerFactory
 
@@ -11,21 +14,22 @@ import scala.concurrent.duration._
   * Class responsible for scheduling the checks and providing method to replace them
   * @param actorSystem
   */
-class CheckScheduler(implicit actorSystem: ActorSystem) {
+class CheckScheduler(wemoConnector: WemoConnector,
+                     netatmoConnector: NetatmoConnector,
+                     temperatureChecker: ActorRef,
+                     humidityChecker: ActorRef
+                    )(implicit actorSystem: ActorSystem) {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
   private[this] implicit val executionContext = actorSystem.dispatcher
 
-  private[this] val netatmoConnector = new NetatmoConnector
-  private[this] val wemoConnector = new WemoConnector
+  private[this] val conf = ConfigFactory.load().getConfig("scheduler")
 
-  private[this] val checkInterval = 10.minutes // TODO: Read from conf
+  private[this] val checkInterval =
+    FiniteDuration(conf.getDuration("checkInterval").getNano, TimeUnit.NANOSECONDS)
 
-  private[this] val temperatureChecker = actorSystem.actorOf(TemperatureChecker.props(wemoConnector, netatmoConnector))
-  private[this] val humidityChecker = actorSystem.actorOf(HumidityChecker.props(wemoConnector, netatmoConnector))
-
-  private[this] var tempSchedule: Option[Cancellable] = None
-  private[this] var humiditySchedule: Option[Cancellable] = None
+  private[netwemo] var tempSchedule: Option[Cancellable] = None
+  private[netwemo] var humiditySchedule: Option[Cancellable] = None
 
   def scheduleOrReplaceTemperature(initialDelay: FiniteDuration) = {
     tempSchedule.foreach { schedule =>

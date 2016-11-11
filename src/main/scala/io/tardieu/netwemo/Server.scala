@@ -23,7 +23,7 @@ class Server(checkScheduler: CheckScheduler)(implicit actorSystem: ActorSystem) 
   private[this] val host = conf.getString("host")
   private[this] val port = conf.getInt("port")
 
-  private[this] val route =
+  private[netwemo] val route =
     path("temperature" / "deactivate") {
       get {
         parameter('duration.as[Int]) { duration =>
