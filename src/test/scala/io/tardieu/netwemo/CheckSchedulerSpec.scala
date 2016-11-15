@@ -29,7 +29,11 @@ class CheckSchedulerSpec extends FlatSpec with Matchers with MockitoSugar with B
   }
 
   "The CheckScheduler" should
-  "correctly create a temperature schedule" in new Fixtures {
+  "correctly parse the checkInterval" in new Fixtures {
+    checkScheduler.checkInterval shouldBe 1.second
+  }
+
+  it should "correctly create a temperature schedule" in new Fixtures {
     checkScheduler.tempSchedule shouldBe empty
     checkScheduler.scheduleOrReplaceTemperature(1.hour)
     checkScheduler.tempSchedule shouldBe defined

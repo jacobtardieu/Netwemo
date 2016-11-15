@@ -25,8 +25,8 @@ class CheckScheduler(wemoConnector: WemoConnector,
 
   private[this] val conf = ConfigFactory.load().getConfig("scheduler")
 
-  private[this] val checkInterval =
-    FiniteDuration(conf.getDuration("checkInterval").getNano, TimeUnit.NANOSECONDS)
+  private[netwemo] val checkInterval =
+    FiniteDuration(conf.getDuration("checkInterval").getSeconds, TimeUnit.SECONDS)
 
   private[netwemo] var tempSchedule: Option[Cancellable] = None
   private[netwemo] var humiditySchedule: Option[Cancellable] = None
