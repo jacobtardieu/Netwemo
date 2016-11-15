@@ -3,6 +3,7 @@ import java.time.LocalTime
 
 import akka.actor.Props
 import com.typesafe.config.ConfigFactory
+import io.tardieu.netwemo.Utils
 import io.tardieu.netwemo.connectors.{NetatmoConnector, WemoConnector}
 
 import scala.concurrent.Future
@@ -31,7 +32,7 @@ class HumidityChecker private (val wemoConnector: WemoConnector, val netatmoConn
 
   private def inService(startTime: LocalTime, stopTime: LocalTime): Boolean = {
     val now = LocalTime.now()
-    val b = now.isAfter(startTime) && now.isBefore(stopTime)
+    val b = Utils.inBetween(now, startTime, stopTime)
     log.debug(s"Humidity in service: {}", b)
     b
   }

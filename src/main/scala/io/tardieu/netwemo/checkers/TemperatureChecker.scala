@@ -4,6 +4,7 @@ import java.time.{DayOfWeek, LocalDateTime, LocalTime}
 
 import akka.actor.Props
 import com.typesafe.config.ConfigFactory
+import io.tardieu.netwemo.Utils
 import io.tardieu.netwemo.connectors.{NetatmoConnector, WemoConnector}
 
 import scala.concurrent.Future
@@ -38,7 +39,7 @@ class TemperatureChecker private (val wemoConnector: WemoConnector, val netatmoC
 
   private def inColdHours(startTime: LocalTime, stopTime: LocalTime): Boolean = {
     val now = LocalTime.now()
-    val b = now.isAfter(startTime) && now.isBefore(stopTime) && isWorkingDay
+    val b = Utils.inBetween(now, startTime, stopTime) && isWorkingDay
     log.debug("In cold hours: {}", b)
     b
   }
